@@ -3,7 +3,7 @@ import cn from 'classnames';
 import './employees-list-item.css';
 
 const EmployeesListItem = (props) => {
-  const { name, salary, increase, rise, onDelete, onToggleProp } = props;
+  const { name, salary, increase, rise, onDelete, onToggleProp, onValueChange } = props;
   let classNames = cn('list-group-item', 'd-flex', 'justify-content-between', {
     increase,
     like: rise,
@@ -18,9 +18,10 @@ const EmployeesListItem = (props) => {
         {name}
       </span>
       <input
-        type='text'
+        type='number'
         className='list-group-item-input'
-        defaultValue={salary + '$'}
+        value={salary}
+        onChange={onValueChange}
       />
       <div className='d-flex justify-content-center align-items-center'>
         <button
