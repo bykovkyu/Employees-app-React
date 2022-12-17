@@ -18,10 +18,9 @@ class App extends Component {
         { name: 'Alex M.', salary: 23000, increase: false, rise: true, id: nextId() },
         { name: 'Carl N.', salary: 15000, increase: false, rise: false, id: nextId() },
       ],
+      term: '',
+      activeFlt: 'all',
     };
-    // const { totalEmployeers, totalIncrease } = this.refreshInfo(this.state.data);
-    // this.state.totalEmployeers = totalEmployeers;
-    // this.state.totalIncrease = totalIncrease;
   }
 
   addItem = ({ name, salary }) => {
@@ -30,7 +29,6 @@ class App extends Component {
       const newData = [...data, newItem];
       return {
         data: newData,
-        // ...this.refreshInfo(newData),
       };
     });
   };
@@ -40,17 +38,9 @@ class App extends Component {
       const newData = data.filter((item) => item.id !== id);
       return {
         data: newData,
-        // ...this.refreshInfo(newData),
       };
     });
   };
-
-  // refreshInfo = (data) => {
-  //   return {
-  //     totalEmployeers: data.length,
-  //     totalIncrease: data.filter((item) => item.increase).length,
-  //   };
-  // };
 
   onToggleProp = (id, prop) => {
     this.setState(({ data }) => ({
@@ -62,35 +52,39 @@ class App extends Component {
       }),
     }));
   };
-  /*   onToggleIncrease = (id) => {
-    this.setState(({ data }) => {
-      const newData = data.map((item) => {
-        if (item.id === id) {
-          return { ...item, increase: !item.increase };
-        }
-        return item;
-      });
-      return {
-        data: newData,
-        // ...this.refreshInfo(newData),
-      };
-    });
-  }; */
 
-  /*   onToggleRise = (id) => {
-    this.setState(({ data }) => ({
-      data: data.map((item) => {
-        if (item.id === id) {
-          return { ...item, rise: !item.rise };
-        }
-        return item;
-      }),
-    }));
-  }; */
+  searchEmp = (items, term) => {
+    if (term.length === 0) {
+      return items;
+    }
+    return items.filter((item) => {
+      return item.name.toLowerCase().indexOf(term.toLowerCase()) > -1;
+    });
+  };
+
+  onUpdateSearch = (term) => {
+    this.setState({ term });
+  };
+
+  onFilter = (prop) => {
+    this.setState({ activeFlt: prop });
+  };
 
   render() {
-    const totalEmployees = this.state.data.length;
-    const totalIncreased = this.state.data.filter((item) => item.increase).length;
+    const { data, term, activeFlt } = this.state;
+    const totalEmployees = data.length;
+    const totalIncreased = data.filter((item) => item.increase).length;
+    let visibleData = this.searchEmp(data, term);
+    switch (activeFlt) {
+      case 'rise':
+        visibleData = visibleData.filter((item) => item.rise);
+        break;
+      case 'salary':
+        visibleData = visibleData.filter((item) => item.salary > 1000);
+        break;
+      default:
+        break;
+    }
 
     return (
       <div className='app'>
@@ -100,16 +94,14 @@ class App extends Component {
         />
 
         <div className='search-panel'>
-          <SearchPanel />
-          <AppFilter />
+          <SearchPanel onUpdateSearch={this.onUpdateSearch} />
+          <AppFilter onFilter={this.onFilter} />
         </div>
 
         <EmployeesList
-          data={this.state.data}
+          data={visibleData}
           onDelete={this.deleteItem}
           onToggleProp={this.onToggleProp}
-          // onToggleIncrease={this.onToggleIncrease}
-          // onToggleRise={this.onToggleRise}
         />
         <EmployeesAddForm onAdd={this.addItem} />
       </div>
