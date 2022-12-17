@@ -14,8 +14,9 @@ class EmployeesAddForm extends Component {
   };
 
   onSubmit = (e) => {
-    const { name, salary } = this.state;
     e.preventDefault();
+    if (this.state.name.length < 3 || !this.state.salary) return;
+    const { name, salary } = this.state;
     this.props.onAdd({ name, salary });
     this.setState({ name: '', salary: '' });
   };
@@ -35,8 +36,8 @@ class EmployeesAddForm extends Component {
             name='name'
             value={name}
             onChange={this.onValueChange}
-            required
-            minLength={3}
+            // required
+            // minLength={3}
           />
           <input
             type='number'
@@ -45,8 +46,8 @@ class EmployeesAddForm extends Component {
             name='salary'
             value={salary}
             onChange={this.onValueChange}
-            required
-            min={1000}
+            // required
+            // min={1000}
           />
 
           <button
